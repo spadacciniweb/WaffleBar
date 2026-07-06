@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WaffleBar</title>
+    <link rel="stylesheet" href="./wafflebar.css">
+</head>
+<body>
+    <header id="wb-header">
+        <button
+            id="wb-waffle"
+            title="Applications"
+            aria-label="Open application launcher">
+            <svg viewBox="0 0 24 24" width="20" height="20">
+                <circle cx="5" cy="5" r="1.8"/>
+                <circle cx="12" cy="5" r="1.8"/>
+                <circle cx="19" cy="5" r="1.8"/>
+                <circle cx="5" cy="12" r="1.8"/>
+                <circle cx="12" cy="12" r="1.8"/>
+                <circle cx="19" cy="12" r="1.8"/>
+                <circle cx="5" cy="19" r="1.8"/>
+                <circle cx="12" cy="19" r="1.8"/>
+                <circle cx="19" cy="19" r="1.8"/>
+            </svg>
+        </button>
+    </header>
+    <div id="wb-overlay" class="hidden">
+        <div id="wb-launcher">
+            <!-- Apps injected by wafflebar.js -->
+        </div>
+    </div>
+    <script src="./wafflebar.js"></script>
+</body>
+</html>

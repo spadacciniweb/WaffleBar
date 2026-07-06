@@ -1,0 +1,14 @@
+[
+  {
+    "id": "dev",
+    "title": "dev",
+    "icon": "./icons/dev.webp",
+    "url": "https://dev.example.com"
+  },
+  {
+    "id": "monitoring",
+    "title": "monitoring",
+    "icon": "./icons/monitoring.webp",
+    "url": "https://monitoring.example.com"
+  }
+]
