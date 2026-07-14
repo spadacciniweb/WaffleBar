@@ -48,6 +48,9 @@
         document.body.classList.add(
             "wb-" + position
         );
+        notifyParent(
+            "wafflebar-position-" + position
+        );
     }
     /***************************
      * PARENT COMMUNICATION
