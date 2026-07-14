@@ -1,6 +1,7 @@
 (() => {
-    const WORKSPACE =
-        new URL(document.currentScript.src).origin;
+    const WORKSPACE = new URL(document.currentScript.src).origin;
+    const SIZE = "44px";
+    const MARGIN = "4px";
     if (document.getElementById("wafflebar")) {
         return;
     }
@@ -15,11 +16,11 @@
             );
         Object.assign(iframe.style, {
             position: "fixed",
-            top: "8px",
-            right: "8px",
+            top: "0",
+            right: "0",
             left: "auto",
-            width: "44px",
-            height: "44px",
+            width: SIZE,
+            height: SIZE,
             border: "0",
             margin: "0",
             padding: "0",
@@ -48,19 +49,19 @@
                 }
                 switch (event.data.type) {
                     case "wafflebar-open":
-                        iframe.style.width = "100%";
+                        iframe.style.width = "100vw";
                         iframe.style.height = "100vh";
                         break;
                     case "wafflebar-close":
-                        iframe.style.width = "44px";
-                        iframe.style.height = "44px";
+                        iframe.style.width = SIZE;
+                        iframe.style.height = SIZE;
                         break;
                     case "wafflebar-position-left":
-                        iframe.style.left = "0";
+                        iframe.style.left = MARGIN;
                         iframe.style.right = "auto";
                         break;
                     case "wafflebar-position-right":
-                        iframe.style.right = "0";
+                        iframe.style.right = MARGIN;
                         iframe.style.left = "auto";
                         break;
                 }

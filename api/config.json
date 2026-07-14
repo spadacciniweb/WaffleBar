@@ -1,5 +1,6 @@
 {
   "ui": {
-    "position": "right"
+    "position": "right",
+    "theme": "dark"
   }
 }

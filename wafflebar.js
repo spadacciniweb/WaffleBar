@@ -20,6 +20,7 @@
     let appsCache = null;
     let isLoaded = false;
     let position = "right";
+    let theme = "dark";
     /***************************
      * LOAD CONFIG
      **************************/
@@ -32,24 +33,41 @@
                 throw new Error("Cannot load config.json");
             }
             const config = await response.json();
+            const ui = config.ui || {};
             if (
-                config.ui &&
-                (
-                    config.ui.position === "left" ||
-                    config.ui.position === "right"
-                )
+                ui.position === "left" ||
+                ui.position === "right"
             ) {
                 position = config.ui.position;
             }
+            if (
+                ui.theme === "dark" ||
+                ui.theme === "light"
+            ) {
+                theme = config.ui.theme;
+            }
         } catch (err) {
-            // Default remains right
+            console.error("WaffleBar config:", err);
             position = "right";
+            theme = "dark";
         }
+        document.body.classList.remove(
+            "wb-left",
+            "wb-right",
+            "wb-theme-dark",
+            "wb-theme-light"
+        );
         document.body.classList.add(
             "wb-" + position
         );
+        document.body.classList.add(
+            "wb-theme-" + theme
+        );
         notifyParent(
             "wafflebar-position-" + position
+        );
+        notifyParent(
+            "wafflebar-ready"
         );
     }
     /***************************
@@ -82,7 +100,10 @@
                     "Cannot load apps.json"
                 );
             }
-            appsCache = await response.json();
+            const data = await response.json();
+            appsCache = Array.isArray(data)
+                ? data
+                : [];
         } catch (err) {
             console.error(
                 "WaffleBar:",
@@ -107,7 +128,7 @@
             img.src = app.icon;
             img.alt = app.title;
             img.onerror = () => {
-                img.style.display = "none";
+                img.remove();
             };
             const label = document.createElement("span");
             label.textContent = app.title;
@@ -197,6 +218,7 @@
     async function init() {
         try {
             await loadConfig();
+            document.body.classList.remove("wb-loading");
             initEvents();
         } catch (err) {
             console.error(
