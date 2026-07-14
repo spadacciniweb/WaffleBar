@@ -1,13 +1,13 @@
 [
   {
     "id": "dev",
-    "title": "dev",
+    "title": "Dev",
     "icon": "./icons/dev.webp",
     "url": "https://dev.example.com"
   },
   {
     "id": "monitoring",
-    "title": "monitoring",
+    "title": "Monitoring",
     "icon": "./icons/monitoring.webp",
     "url": "https://monitoring.example.com"
   }
