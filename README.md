@@ -4,7 +4,7 @@
 
 WaffleBar is a lightweight workspace launcher that brings independent web applications together under a single, unified navigation experience.
 
-It provides a small horizontal bar with a **waffle button** that opens a full-screen application launcher, allowing users to switch seamlessly between multiple web applications.
+It provides a small floating waffle square that opens a full-screen application launcher, allowing users to switch seamlessly between multiple web applications.
 
 Each application remains completely independent, while users experience them as part of a single workspace.
 
@@ -38,6 +38,7 @@ WaffleBar solves this by introducing a **shared launcher layer** that works acro
 - Works with existing applications (no refactor required)
 - Isolated UI via iframe sandbox
 - Centralized configuration via `apps.json`
+- Configurable launcher position via `config.json`
 - Instant deployment across all apps (single script)
 - No Bootstrap / React / Vue dependencies
 - Clean separation between host apps and workspace UI
@@ -52,7 +53,7 @@ WaffleBar uses a simple **iframe-based architecture**:
 - The script injects an iframe into the page
 - The iframe loads the WaffleBar workspace
 - WaffleBar communicates with the host via `postMessage`
-- The iframe expands/collapses when the launcher opens/closes
+- The iframe expands/collapses when the launcher opens/closes, switching between a compact waffle square and a full-screen launcher.
 
 ---
 
@@ -89,11 +90,12 @@ The host application remains completely unaware of WaffleBar's internal implemen
 | wafflebar.js                                             |
 | wafflebar.css                                            |
 | api/apps.json                                            |
+| api/config.json                                          |
 |                                                          |
-|  • Displays the top bar                                 |
-|  • Opens the application launcher                       |
-|  • Loads the application list                           |
-|  • Sends open/close events to the host                  |
+|  • Displays the waffle square                            |
+|  • Opens the application launcher                        |
+|  • Loads the application list                            |
+|  • Sends open/close events to the host                   |
 +----------------------------------------------------------+
 ```
 
@@ -123,7 +125,8 @@ wafflebar/
 ├── embed.js            # Host integration script
 │
 ├── api/
-│   └── apps.json       # App registry
+│   ├── apps.json       # App registry
+│   └── config.json     # Workspace UI configuration
 │
 └── icons/              # App icons
 ```
@@ -155,6 +158,40 @@ Example:
 ```
 
 No code changes are required when adding or removing applications.
+
+---
+
+## Workspace Configuration
+
+The waffle square position can be configured through `api/config.json`.
+
+Example:
+
+```json
+{
+  "ui": {
+    "position": "right"
+  }
+}
+```
+
+Supported values:
+
+| Value   | Description                                      |
+| ------- | ------------------------------------------------ |
+| `left`  | Places the waffle square in the top-left corner  |
+| `right` | Places the waffle square in the top-right corner |
+
+
+If `config.json` is missing, invalid, or contains an unsupported value, WaffleBar defaults to:
+
+```json
+{
+  "ui": {
+    "position": "right"
+  }
+}
+```
 
 ---
 
@@ -198,10 +235,10 @@ This allows the iframe (WaffleBar) to request UI state changes from the parent a
 
 ### Events
 
-| Event             | Description                        |
-|------------------|------------------------------------|
-| `wafflebar-open`  | Expands the iframe to full screen  |
-| `wafflebar-close` | Collapses the iframe to top bar    |
+| Event             | Description                                |
+|-------------------|--------------------------------------------|
+| `wafflebar-open`  | Expands the iframe to full screen          |
+| `wafflebar-close` | Collapses the iframe back to waffle square |
 
 ### Flow
 
@@ -209,7 +246,7 @@ This allows the iframe (WaffleBar) to request UI state changes from the parent a
 2. WaffleBar sends a `wafflebar-open` message to the parent window  
 3. The host application (via `embed.js`) expands the iframe to full height  
 4. When the launcher is closed, WaffleBar sends `wafflebar-close`  
-5. The host application collapses the iframe back to the top bar height  
+5. The host application collapses the iframe back to the compact waffle square size
 
 ### Key Principle
 

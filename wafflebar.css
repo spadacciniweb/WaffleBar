@@ -9,29 +9,48 @@ body {
     font-family: system-ui, sans-serif;
 }
 /***************************
- * HEADER
+ * HEADER / WAFFLESQUARE
  **************************/
 #wb-header {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 44px;
+    top: 8px;
+    width: 52px;
+    height: 52px;
     background: #222;
     display: flex;
     align-items: center;
-    padding: 0 8px;
+    justify-content: center;
+    border-radius: 12px;
     box-sizing: border-box;
     z-index: 10;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+#wb-header:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,.25);
+}
+#wb-header:active {
+    transform: scale(0.98);
+}
+/***************************
+ * POSITION
+ **************************/
+.wb-left #wb-header {
+    left: 8px;
+    right: auto;
+}
+.wb-right #wb-header {
+    right: 8px;
+    left: auto;
 }
 /***************************
  * WAFFLE BUTTON
  **************************/
 #wb-waffle {
-    width: 34px;
-    height: 34px;
+    width: 44px;
+    height: 44px;
     border: none;
-    border-radius: 6px;
+    border-radius: 10px;
     background: transparent;
     cursor: pointer;
     padding: 0;
@@ -57,20 +76,29 @@ body {
     align-items: flex-start;
     z-index: 9999;
 }
+.wb-left #wb-overlay {
+    justify-content: flex-start;
+}
+.wb-right #wb-overlay {
+    justify-content: flex-end;
+}
 /***************************
  * LAUNCHER
  **************************/
 #wb-launcher {
-    margin-top: 52px;
+    margin-top: 68px;
     margin-left: 8px;
+    margin-right: 8px;
     width: 360px;
     max-width: calc(100vw - 16px);
     background: white;
     border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.25);
     padding: 16px;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns:
+        repeat(3, 1fr);
     gap: 12px;
     box-sizing: border-box;
 }
@@ -100,7 +128,6 @@ body {
 .wb-app span {
     display: block;
     margin-top: 8px;
-
     font-size: 14px;
 }
 /***************************

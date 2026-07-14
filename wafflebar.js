@@ -4,7 +4,6 @@
      **************************/
     const params = new URLSearchParams(window.location.search);
     const parentOrigin = params.get("parent") || "*";
-
     /***************************
      * DOM
      **************************/
@@ -12,21 +11,58 @@
     const launcher = document.getElementById("wb-launcher");
     const button = document.getElementById("wb-waffle");
 
+    if (!overlay || !launcher || !button) {
+        return;
+    }
     /***************************
      * STATE
      **************************/
     let appsCache = null;
     let isLoaded = false;
-
+    let position = "right";
+    /***************************
+     * LOAD CONFIG
+     **************************/
+    async function loadConfig() {
+        try {
+            const response = await fetch("./api/config.json", {
+                cache: "no-store"
+            });
+            if (!response.ok) {
+                throw new Error("Cannot load config.json");
+            }
+            const config = await response.json();
+            if (
+                config.ui &&
+                (
+                    config.ui.position === "left" ||
+                    config.ui.position === "right"
+                )
+            ) {
+                position = config.ui.position;
+            }
+        } catch (err) {
+            // Default remains right
+            position = "right";
+        }
+        document.body.classList.add(
+            "wb-" + position
+        );
+    }
     /***************************
      * PARENT COMMUNICATION
      **************************/
     function notifyParent(type) {
         if (window.parent !== window) {
-            window.parent.postMessage({ type }, parentOrigin);
+            window.parent.postMessage(
+                {
+                    source: "wafflebar",
+                    type
+                },
+                parentOrigin
+            );
         }
     }
-
     /***************************
      * LOAD APPS
      **************************/
@@ -39,16 +75,20 @@
                 cache: "no-store"
             });
             if (!response.ok) {
-                throw new Error("Cannot load apps.json");
+                throw new Error(
+                    "Cannot load apps.json"
+                );
             }
             appsCache = await response.json();
         } catch (err) {
-            console.error("WaffleBar:", err);
+            console.error(
+                "WaffleBar:",
+                err
+            );
             appsCache = [];
         }
         return appsCache;
     }
-
     /***************************
      * RENDER APPS
      **************************/
@@ -63,64 +103,104 @@
             const img = document.createElement("img");
             img.src = app.icon;
             img.alt = app.title;
+            img.onerror = () => {
+                img.style.display = "none";
+            };
             const label = document.createElement("span");
             label.textContent = app.title;
             link.appendChild(img);
             link.appendChild(label);
-            link.addEventListener("click", () => {
-                closeLauncher();
-            });
+            link.addEventListener(
+                "click",
+                () => {
+                    closeLauncher();
+                }
+            );
             launcher.appendChild(link);
         });
     }
-
     /***************************
      * OPEN
      **************************/
     async function openLauncher() {
-        overlay.classList.remove("hidden");
+        overlay.classList.remove(
+            "hidden"
+        );
         if (!isLoaded) {
             const apps = await loadApps();
             renderApps(apps);
             isLoaded = true;
         }
-        notifyParent("wafflebar-open");
+        notifyParent(
+            "wafflebar-open"
+        );
     }
     /***************************
      * CLOSE
      **************************/
     function closeLauncher() {
-        overlay.classList.add("hidden");
-        notifyParent("wafflebar-close");
+        overlay.classList.add(
+            "hidden"
+        );
+        notifyParent(
+            "wafflebar-close"
+        );
     }
     /***************************
      * TOGGLE
      **************************/
     function toggleLauncher() {
-        if (overlay.classList.contains("hidden")) {
+        if (
+            overlay.classList.contains(
+                "hidden"
+            )
+        ) {
             openLauncher();
         } else {
             closeLauncher();
         }
     }
-
     /***************************
      * EVENTS
      **************************/
-    button.addEventListener("click", function (e) {
-        e.stopPropagation();
-        toggleLauncher();
-    });
-
-    overlay.addEventListener("click", function (e) {
-        if (e.target === overlay) {
-            closeLauncher();
+    function initEvents() {
+        button.addEventListener(
+            "click",
+            function (e) {
+                e.stopPropagation();
+                toggleLauncher();
+            }
+        );
+        overlay.addEventListener(
+            "click",
+            function (e) {
+                if (e.target === overlay) {
+                    closeLauncher();
+                }
+            }
+        );
+        document.addEventListener(
+            "keydown",
+            function (e) {
+                if (e.key === "Escape") {
+                    closeLauncher();
+                }
+            }
+        );
+    }
+    /***************************
+     * START
+     **************************/
+    async function init() {
+        try {
+            await loadConfig();
+            initEvents();
+        } catch (err) {
+            console.error(
+                "WaffleBar initialization failed:",
+                err
+            );
         }
-    });
-
-    document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape") {
-            closeLauncher();
-        }
-    });
+    }
+    init();
 })();
