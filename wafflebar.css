@@ -156,6 +156,17 @@ body {
     font-size: 14px;
 }
 /***************************
+ * CURRENT ITEM
+ **************************/
+.wb-current {
+    opacity: 0.55;
+    cursor: default;
+}
+.wb-current:hover {
+    background: transparent;
+    transform: none;
+}
+/***************************
  * HELPERS
  **************************/
 .hidden {

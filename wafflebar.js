@@ -138,28 +138,41 @@
      **************************/
     function renderApps(apps) {
         launcher.innerHTML = "";
+
         apps.forEach(app => {
             const link = document.createElement("a");
             link.className = "wb-app";
-            link.href = app.url;
+
+            const isCurrentApp = app.id === appId;
+
+            if (isCurrentApp) {
+                link.classList.add("wb-current");
+            } else {
+                link.href = app.url;
+                link.target = "_top";
+            }
             link.title = app.title;
-            link.target = "_top";
             const img = document.createElement("img");
             img.src = app.icon;
             img.alt = app.title;
             img.onerror = () => {
                 img.remove();
             };
+
             const label = document.createElement("span");
             label.textContent = app.title;
             link.appendChild(img);
             link.appendChild(label);
-            link.addEventListener(
-                "click",
-                () => {
-                    closeLauncher();
-                }
-            );
+
+            if (!isCurrentApp) {
+                link.addEventListener(
+                    "click",
+                    () => {
+                        closeLauncher();
+                    }
+                );
+            }
+
             launcher.appendChild(link);
         });
     }

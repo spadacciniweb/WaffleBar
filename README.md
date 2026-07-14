@@ -39,7 +39,7 @@ WaffleBar solves this by introducing a **shared launcher layer** that works acro
 - Isolated UI via iframe sandbox
 - Centralized application registry via `apps.json`
 - Global UI configuration via `config.json`
-- Optional per-application customization (theme overrides)
+- Optional per-application customization (theme overrides and active application awareness)
 - Instant deployment across all apps (single script)
 - No Bootstrap / React / Vue dependencies
 - Clean separation between host apps and workspace UI
@@ -184,7 +184,7 @@ Supported values:
 
 Theme priority:
 
-1. Application theme from `apps.json` (only when the application is identified)
+1. Application-specific overrides from `apps.json` (only when `data-app` identifies the application)
 2. Global theme from `config.json`
 3. Default fallback: `dark`
 
@@ -246,9 +246,9 @@ The script will:
 * Handle resizing and interaction
 * Keep the host application untouched
 
-### Optional application customization
+### Optional application identification and customization
 
-The `data-app` attribute is optional.
+The `data-app` attribute is optional and provides application context to WaffleBar.
 
 Most applications do not need it. If the default WaffleBar configuration is sufficient, simply include:
 
@@ -282,6 +282,24 @@ Example:
 ```
 
 When `data-app` is provided, WaffleBar can apply application-specific settings. When it is omitted, WaffleBar uses the global configuration from `config.json`.
+
+When `data-app` is provided, WaffleBar can identify the current application.
+
+The current application remains visible in the launcher but is marked as the active application and cannot be selected again. Other applications remain available for navigation.
+
+If `data-app` is omitted, WaffleBar has no information about the current application and all launcher entries remain selectable.
+
+Example:
+
+```text
++----------------+
+| CRM       ✓    |  <- current application (disabled)
+| Wiki           |
+| Monitoring     |
++----------------+
+```
+
+> `data-app` is only required when WaffleBar needs to know which application is currently hosting it. For simple deployments without per-application settings or current application awareness, the standard embed script is sufficient.
 
 ---
 
