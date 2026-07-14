@@ -15,10 +15,11 @@
             );
         Object.assign(iframe.style, {
             position: "fixed",
-            top: "0",
-            left: "0",
-            width: "52px",
-            height: "52px",
+            top: "8px",
+            right: "8px",
+            left: "auto",
+            width: "44px",
+            height: "44px",
             border: "0",
             margin: "0",
             padding: "0",
@@ -51,8 +52,16 @@
                         iframe.style.height = "100vh";
                         break;
                     case "wafflebar-close":
-                        iframe.style.width = "52px";
-                        iframe.style.height = "52px";
+                        iframe.style.width = "44px";
+                        iframe.style.height = "44px";
+                        break;
+                    case "wafflebar-position-left":
+                        iframe.style.left = "0";
+                        iframe.style.right = "auto";
+                        break;
+                    case "wafflebar-position-right":
+                        iframe.style.right = "0";
+                        iframe.style.left = "auto";
                         break;
                 }
             }
