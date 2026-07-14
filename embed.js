@@ -1,4 +1,6 @@
 (() => {
+    const script = document.currentScript;
+    const APP_ID = script.dataset.app || "";
     const WORKSPACE = new URL(document.currentScript.src).origin;
     const SIZE = "44px";
     const MARGIN = "4px";
@@ -8,12 +10,11 @@
     function create() {
         const iframe = document.createElement("iframe");
         iframe.id = "wafflebar";
-        iframe.src =
-            WORKSPACE +
-            "/?parent=" +
-            encodeURIComponent(
-                window.location.origin
-            );
+        iframe.src = WORKSPACE +
+                     "/?parent=" +
+                     encodeURIComponent( window.location.origin ) +
+                     "&app=" +
+                     encodeURIComponent( APP_ID );
         Object.assign(iframe.style, {
             position: "fixed",
             top: "0",

@@ -4,6 +4,7 @@
      **************************/
     const params = new URLSearchParams(window.location.search);
     const parentOrigin = params.get("parent") || "*";
+    const appId = params.get("app") || "";
     /***************************
      * DOM
      **************************/
@@ -51,6 +52,25 @@
             position = "right";
             theme = "dark";
         }
+        if (appId) {
+            try {
+                const apps = await loadApps();
+                const app = apps.find(
+                    a => a.id === appId
+                );
+                if (
+                    app &&
+                    (
+                        app.theme === "dark" ||
+                        app.theme === "light"
+                    )
+                ) {
+                    theme = app.theme;
+                }
+            } catch (err) {
+                // ignore and keep global theme
+            }
+        }
         document.body.classList.remove(
             "wb-left",
             "wb-right",
@@ -88,7 +108,7 @@
      * LOAD APPS
      **************************/
     async function loadApps() {
-        if (appsCache) {
+        if (appsCache !== null) {
             return appsCache;
         }
         try {

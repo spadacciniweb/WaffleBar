@@ -37,8 +37,9 @@ WaffleBar solves this by introducing a **shared launcher layer** that works acro
 - Framework agnostic (works with any stack)
 - Works with existing applications (no refactor required)
 - Isolated UI via iframe sandbox
-- Centralized configuration via `apps.json`
-- Configurable launcher position via `config.json`
+- Centralized application registry via `apps.json`
+- Global UI configuration via `config.json`
+- Optional per-application customization (theme overrides)
 - Instant deployment across all apps (single script)
 - No Bootstrap / React / Vue dependencies
 - Clean separation between host apps and workspace UI
@@ -137,7 +138,6 @@ wafflebar/
 
 Applications are defined in `api/apps.json`.
 
-
 Example:
 
 ```json
@@ -159,18 +159,48 @@ Example:
 
 No code changes are required when adding or removing applications.
 
+Each application can optionally define its own WaffleBar theme:
+
+```json
+[
+  {
+    "id": "crm",
+    "title": "CRM",
+    "icon": "icons/crm.svg",
+    "url": "https://crm.example.com",
+    "theme": "light"
+  }
+]
+```
+
+The `theme` property is optional. If omitted, the application uses the global WaffleBar configuration.
+
+Supported values:
+
+| Value   | Description          |
+| ------- | -------------------- |
+| `dark`  | Dark launcher theme  |
+| `light` | Light launcher theme |
+
+Theme priority:
+
+1. Application theme from `apps.json` (only when the application is identified)
+2. Global theme from `config.json`
+3. Default fallback: `dark`
+
 ---
 
 ## Workspace Configuration
 
-The waffle square position can be configured through `api/config.json`.
+The waffle square position and default theme can be configured through `api/config.json`.
 
 Example:
 
 ```json
 {
   "ui": {
-    "position": "right"
+    "position": "right",
+    "theme": "dark"
   }
 }
 ```
@@ -181,17 +211,21 @@ Supported values:
 | ------- | ------------------------------------------------ |
 | `left`  | Places the waffle square in the top-left corner  |
 | `right` | Places the waffle square in the top-right corner |
+| `dark`  | Uses the dark launcher theme                     |
+| `light` | Uses the light launcher theme                    |
 
-
-If `config.json` is missing, invalid, or contains an unsupported value, WaffleBar defaults to:
+If `config.json` is missing, invalid, or contains unsupported values, WaffleBar defaults to:
 
 ```json
 {
   "ui": {
-    "position": "right"
+    "position": "right",
+    "theme": "dark"
   }
 }
 ```
+
+The workspace configuration acts as the global default for all embedded applications.
 
 ---
 
@@ -203,13 +237,51 @@ To integrate WaffleBar into any application, add one line of code:
 <script src="https://workspace.example.com/embed.js"></script>
 ```
 
-That’s it.
+That's it.
 
 The script will:
-- Inject the iframe automatically
-- Load the WaffleBar workspace UI
-- Handle resizing and interaction
-- Keep the host application untouched
+
+* Inject the iframe automatically
+* Load the WaffleBar workspace UI
+* Handle resizing and interaction
+* Keep the host application untouched
+
+### Optional application customization
+
+The `data-app` attribute is optional.
+
+Most applications do not need it. If the default WaffleBar configuration is sufficient, simply include:
+
+```html
+<script src="https://workspace.example.com/embed.js"></script>
+```
+
+No application identifier is required.
+
+If an application needs custom WaffleBar settings (for example, a different launcher theme), provide the matching application id:
+
+```html
+<script
+    src="https://workspace.example.com/embed.js" 
+    data-app="crm">
+</script>
+```
+
+The value must match the `id` field defined in `api/apps.json`.
+
+Example:
+
+```json
+{
+  "id": "crm",
+  "title": "CRM",
+  "icon": "icons/crm.svg",
+  "url": "https://crm.example.com",
+  "theme": "light"
+}
+```
+
+When `data-app` is provided, WaffleBar can apply application-specific settings. When it is omitted, WaffleBar uses the global configuration from `config.json`.
 
 ---
 
